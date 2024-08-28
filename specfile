@@ -1,0 +1,57 @@
+Name:		OpenDJ
+Version:	2.4.3
+Release:	1%{?dist}
+Summary:	OpenDJ, Open source LDAPv3 compliant directory service
+
+Group:	Productivity/Networking/LDAP/Servers
+License:	CDDL-1.0
+Vendor:	ForgeRock
+URL:		http://www.forgerock.com/opendj.html
+
+# Enable this line if you have internet access
+# Source0:	http://download.forgerock.org/downloads/opendj/2.4.3/OpenDJ-2.4.3.zip
+
+# Enable this line if you have the zip file downloaded in rpmbuild/SOURCES
+Source0:	OpenDJ-2.4.3.zip
+
+BuildRequires:	unzip
+
+# Version is not granular enough. Disabled until I can identify how to get the true java version
+# PreReq:		java = 1.6.0
+
+%description
+OpenDJ is an LDAPv3 compliant directory service, developed for the Java
+platform, providing a high performance, highly available and secure store
+for the identities managed by enterprises. Its easy installation process,
+combined with the power of the Java platform makes OpenDJ one of the
+simplest and fastest directory servers to deploy and manage
+
+%prep
+%setup -q
+
+%install
+rm -rf $RPM_BUILD_ROOT
+
+# remove MacOS stuff
+rm -rf QuickSetup.app Uninstall.app bin/ControlPanel.app
+# remove Windows stuff
+rm -rf *.bat bat lib/_*.bat lib/*.exe lib/*.bat
+
+install -d -m 0755 $RPM_BUILD_ROOT/opt/%{name}
+
+cp -aRf * $RPM_BUILD_ROOT/opt/%{name}
+
+# For upgrades will need to identify which files will not be replaced
+# %config(noreplace) /opt/%{name}/config/config.ldif
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+%doc README install.html install.txt opends_logo.png legal-notices example-plugin.zip
+/opt/%{name}/
+
+%changelog
+* Fri Sep 23 2011 Danny Turner <danny.turner@ericsson.com>
+- Initial package creation
